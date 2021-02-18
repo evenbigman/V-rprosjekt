@@ -1,0 +1,165 @@
+<html>
+    <head>
+        <style>
+            *{
+                margin: 0;
+                padding: 0;
+            }
+
+            .wrapper{
+                margin: 10px;
+                width: 1000px;
+                height: 700px;
+                border: 1px solid black;
+                background-image: url(assets/spawn.jpg);
+            }
+
+            .player{
+                width: 50px;
+                height: 80px;
+                position: absolute;
+                top: 0;
+                left: 0;
+                margin-left: -25px;
+                margin-top: -40px;
+            }
+
+            .player-north{
+                background-image: url(assets/player/nord/nord.png);
+            }
+
+            .player-east{
+                background-image: url(assets/player/ost/ost.png);
+            }
+
+            .player-south{
+                background-image: url(assets/player/sor/sor.png);
+            }
+
+            .player-west{
+                background-image: url(assets/player/vest/vest.png);
+            }
+
+            .bonkRight{
+                transform: rotate(90deg);
+            }
+
+            @keyframes bonkRight {
+                0% {transform: "rotate(0deg)";}
+                50% {transform: "rotate(45deg)";}
+                100% {transform: "rotate(0deg)";}
+            }
+
+        </style>
+    </head>
+    <body>
+        <div class="wrapper">
+            <div class="player">
+            </div>
+        </div>
+        <script>
+            var bodyEl = document.querySelector("body")
+            var wrapperEl = document.querySelector(".wrapper")
+            var playerEl = document.querySelector(".player")
+
+            bodyEl.addEventListener("keydown", playerKeyStart)
+            bodyEl.addEventListener("keyup", playerKeyStop)
+
+            var bonk = new Audio('https://www.myinstants.com/media/sounds/bonk_AgRFvsD.mp3')
+
+            var player = {
+                x: 500,
+                y: 350,
+                speed: 1,
+                xSpeed: 0,
+                ySpeed: 0,
+                isMoving: false,
+                move: function(){
+                    this.x += this.xSpeed;
+                    this.y += this.ySpeed;
+                },
+                draw: function(){
+                    playerEl.style.transform = "translate(" + player.x + "px, " + player.y + "px)"
+                },
+                north:  function(){
+                    playerEl.classList.remove("player-south")
+                    playerEl.classList.add("player-north")
+                },
+                east: function(){
+                    playerEl.classList.remove("player-south")
+                    playerEl.classList.add("player-east")
+                },
+                west: function(){
+                    playerEl.classList.remove("player-south")
+                    playerEl.classList.add("player-west")
+                },
+                south: function(){
+                    playerEl.classList.remove("player-north")
+                    playerEl.classList.remove("player-east")
+                    playerEl.classList.remove("player-west")
+                    playerEl.classList.add("player-south")
+                },
+                bonk: function(){
+                    bonk.play();
+                }
+
+            }
+
+            player.south();
+            playerEl.style.transform = "translate(" + player.x + "px, " + player.y + "px)"
+
+            function playerKeyStart(e){
+                var key =  String.fromCharCode(e.keyCode).toLowerCase()
+                if(key == "w"){
+                    player.ySpeed = -player.speed;
+                    player.north();
+                }
+                else if (key == "a"){
+                    player.xSpeed = -player.speed;
+                    player.west();
+                }
+                else if (key == "s"){
+                    player.ySpeed = player.speed;
+                    player.south();
+                }
+                else if (key == "d"){
+                    player.xSpeed = player.speed;
+                    player.east();
+                }
+                else if (e.keyCode == 32){
+                    player.bonk()
+                }
+            }
+
+            function playerKeyStop(e){
+                var key =  String.fromCharCode(e.keyCode).toLowerCase()
+                if(key == "w"){
+                    player.ySpeed = 0;
+                    player.south();
+                }
+                else if (key == "a"){
+                    player.xSpeed = 0;
+                    player.south();
+                }
+                else if (key == "s"){
+                    player.ySpeed = 0;
+                    player.south();
+                }
+                else if (key == "d"){
+                    player.xSpeed = 0;
+                    player.south();
+                }
+            }
+
+
+            function game (){
+                player.move();
+                player.draw();
+                requestAnimationFrame(game)
+            }
+            requestAnimationFrame(game)
+
+            playerEl.style.transform = "scale(4)";
+        </script>
+    </body>
+</html>
